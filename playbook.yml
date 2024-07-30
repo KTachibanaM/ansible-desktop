@@ -1,0 +1,350 @@
+---
+- name: Install git, GCM and git-profile-manager
+  hosts: localhost
+  tags: git
+  tasks:
+    - name: Install prerequisites
+      become: yes
+      apt:
+        pkg:
+          - wget
+          - git
+        state: present
+
+    - name: Download GCM
+      get_url:
+        url: https://github.com/git-ecosystem/git-credential-manager/releases/download/v2.5.1/gcm-linux_amd64.2.5.1.deb
+        dest: /tmp/gcm.deb
+
+    - name: Install GCM
+      become: yes
+      apt:
+        deb: /tmp/gcm.deb
+        state: present
+
+    - name: Configure GCM
+      command: git-credential-manager configure
+
+    - name: Configure GCM for Secret Service
+      command: git config --global credential.credentialStore secretservice
+
+    - name: Download git-profile-manager
+      get_url:
+        url: https://github.com/dm3ch/git-profile-manager/releases/download/v2.0.3/git-profile-manager_2.0.3_Linux_x86_64.tar.gz
+        dest: /tmp/git-profile-manager.tar.gz
+    
+    - name: Create unpack dir for git-profile-manager
+      file:
+        path: /tmp/git-profile-manager
+        state: directory
+    
+    - name: Unpack git-profile-manager
+      unarchive:
+        src: /tmp/git-profile-manager.tar.gz
+        dest: /tmp/git-profile-manager
+        remote_src: yes
+    
+    - name: Install git-profile-manager
+      copy:
+        src: /tmp/git-profile-manager/git-profile-manager
+        dest: /home/{{ ansible_user_id }}/.local/bin/git-profile-manager
+        mode: '0755'
+
+    - name: Print message
+      debug:
+        msg: "Please run 'git-profile-manager add' to add new git profiles"
+
+- name: Install fonts
+  hosts: localhost
+  tags: fonts
+  tasks:
+    - name: Install prerequisites
+      become: yes
+      apt:
+        pkg:
+          - wget
+          - unzip
+        state: present
+
+    - name: Download JetBrains Mono font
+      get_url:
+        url: https://download.jetbrains.com/fonts/JetBrainsMono-2.242.zip
+        dest: /tmp/JetBrainsMono.zip
+
+    - name: Unzip JetBrains Mono font
+      become: yes
+      unarchive:
+        src: /tmp/JetBrainsMono.zip
+        dest: /usr/share/fonts
+        remote_src: yes
+
+    - name: Update font cache
+      become: yes
+      command: fc-cache -f -v
+
+- name: Configure zsh
+  hosts: localhost
+  tags: zsh
+  tasks:
+    - name: Install prerequisites
+      become: yes
+      apt:
+        pkg:
+          - zsh
+          - curl
+          - git
+        state: present
+
+    - name: Install zsh
+      become: yes
+      apt:
+        name: zsh
+        state: present
+
+    - name: Change default shell to zsh
+      become: yes
+      user:
+        name: "{{ ansible_user_id }}"
+        shell: /usr/bin/zsh  # todo: hardcoded?
+
+    - name: Install oh-my-zsh
+      shell: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      args:
+        creates: /home/{{ ansible_user_id }}/.oh-my-zsh
+
+    - name: Install zsh-completions
+      git:
+        repo: https://github.com/zsh-users/zsh-completions.git
+        dest: /home/{{ ansible_user_id }}/.oh-my-zsh/custom/plugins/zsh-completions
+        update: no
+    
+    - name: Install zsh-autosuggestions
+      git:
+        repo: https://github.com/zsh-users/zsh-autosuggestions
+        dest: /home/{{ ansible_user_id }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+        update: no
+
+    - name: Install zsh-syntax-highlighting
+      git:
+        repo: https://github.com/zsh-users/zsh-syntax-highlighting
+        dest: /home/{{ ansible_user_id }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+        update: no
+
+    - name: Copy .zshrc
+      copy:
+        src: files/zshrc
+        dest: /home/{{ ansible_user_id }}/.zshrc
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: '0644'
+
+- name: Install Docker
+  hosts: localhost
+  tags: docker
+  tasks:
+    - name: Install prerequisites
+      become: yes
+      apt:
+        pkg:
+          - wget
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+    
+    - name: Add Docker GPG key
+      become: yes
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      become: yes
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+
+    - name: Install Docker
+      become: yes
+      apt:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+
+    - name: Add user to docker group
+      become: yes
+      user:
+        name: "{{ ansible_user_id }}"
+        groups: docker
+        append: yes
+    
+    - name: Download lazydocker
+      get_url:
+        url: https://github.com/jesseduffield/lazydocker/releases/download/v0.23.3/lazydocker_0.23.3_Linux_x86_64.tar.gz
+        dest: /tmp/lazydocker.tar.gz
+
+    - name: Create unpack dir for lazydocker
+      file:
+        path: /tmp/lazydocker
+        state: directory
+
+    - name: Unpack lazydocker
+      unarchive:
+        src: /tmp/lazydocker.tar.gz
+        dest: /tmp/lazydocker
+        remote_src: yes
+
+    - name: Install lazydocker
+      copy:
+        src: /tmp/lazydocker/lazydocker
+        dest: /home/{{ ansible_user_id }}/.local/bin/lazydocker
+        mode: '0755'
+
+    - name: Print message
+      debug:
+        msg: "Please reboot to apply docker group changes"
+
+- name: Configure Alacritty
+  hosts: localhost
+  tags: alacritty
+  tasks:
+    - name: Copy alacritty.toml
+      copy:
+        src: files/alacritty.toml
+        dest: /home/{{ ansible_user_id }}/.config/alacritty/alacritty.toml
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: '0664'
+
+- name: Configure ulauncher
+  hosts: localhost
+  tags: ulauncher
+  tasks:
+    - name: Copy kagi.png
+      copy:
+        src: files/ulauncher/kagi.png
+        dest: /home/{{ ansible_user_id }}/.config/ulauncher/kagi.png
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: '0664'
+    - name: Copy shortcuts.json
+      copy:
+        src: files/ulauncher/shortcuts.json
+        dest: /home/{{ ansible_user_id }}/.config/ulauncher/shortcuts.json
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: '0664'
+
+- name: Install Android Studio
+  hosts: localhost
+  tags: android-studio
+  tasks:
+    - name: Install prerequisites
+      become: yes
+      apt:
+        pkg:
+          - wget
+        state: present
+    - name: Download Android Studio
+      get_url:
+        url: https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2024.1.1.12/android-studio-2024.1.1.12-linux.tar.gz
+        dest: /tmp/android-studio.tar.gz
+    - name: Create unpack dir for Android Studio
+      file:
+        path: /home/{{ ansible_user_id }}/android-studio
+        state: directory
+    - name: Unpack Android Studio
+      unarchive:
+        src: /tmp/android-studio.tar.gz
+        dest: /home/{{ ansible_user_id }}/android-studio
+        remote_src: yes
+    - name: Create Android Studio desktop file
+      template:
+        src: files/android-studio.desktop.j2
+        dest: /home/{{ ansible_user_id }}/.local/share/applications/jetbrains-studio.desktop
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: '0600'
+
+- name: Configure Gnome
+  hosts: localhost
+  tags: gnome
+  tasks:
+    - name: Disable desktop icons
+      command: gnome-extensions disable ding@rastersoft.com 
+
+    - name: Disable dock
+      command: gnome-extensions disable ubuntu-dock@ubuntu.com
+
+    - name: Show seconds in clock
+      community.general.dconf:
+        key: /org/gnome/desktop/interface/clock-show-seconds
+        value: "true"
+        state: present
+
+    - name: Change time display format to 24h
+      community.general.dconf:
+        key: /org/gnome/desktop/interface/clock-format
+        value: "'24h'"
+        state: present
+    
+    - name: Show date in clock
+      community.general.dconf:
+        key: /org/gnome/desktop/interface/clock-show-date
+        value: "true"
+        state: present
+
+    - name: Show weekday in clock
+      community.general.dconf:
+        key: /org/gnome/desktop/interface/clock-show-weekday
+        value: "true"
+        state: present
+
+    - name: Change default terminal to Alacritty
+      community.general.dconf:
+        key: /org/gnome/desktop/applications/terminal/exec
+        value: "'alacritty'"
+        state: present
+
+    - name: Remove default terminal arg
+      community.general.dconf:
+        key: /org/gnome/desktop/applications/terminal/exec-arg
+        value: "''"
+        state: present
+
+    - name: Set keyboard shortcut for terminal
+      community.general.dconf:
+        key: /org/gnome/settings-daemon/plugins/media-keys/terminal
+        value: "['<Super>t']"
+        state: present
+
+    - name: Set keyboard shortcut for ulauncher-toggle
+      community.general.dconf:
+        key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/binding
+        value: "'<Super>space'"
+        state: present
+
+    - name: Set command for ulauncher-toggle
+      community.general.dconf:
+        key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/command
+        value: "'ulauncher-toggle'"
+        state: present
+
+    - name: Set name for ulauncher-toggle
+      community.general.dconf:
+        key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/name
+        value: "'ulauncher-toggle'"
+        state: present
+
+# ulauncher vscode
+# chinese input
+# telegram
+# wechat

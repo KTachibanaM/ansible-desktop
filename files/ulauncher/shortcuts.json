@@ -1,0 +1,12 @@
+{
+    "28dc7417-fa41-4cfc-a429-d0a336956084": {
+        "id": "28dc7417-fa41-4cfc-a429-d0a336956084",
+        "name": "kagi",
+        "keyword": "?",
+        "cmd": "https://kagi.com/search?q=%s",
+        "icon": "~/.config/ulauncher/kagi.png",
+        "is_default_search": true,
+        "run_without_argument": false,
+        "added": 1721804735.0057864
+    }
+}
