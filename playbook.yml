@@ -231,6 +231,13 @@
         pkg:
           - python3-fuzzywuzzy
         state: present
+    - name: Copy settings.json
+      copy:
+        src: files/ulauncher/settings.json
+        dest: /home/{{ ansible_user_id }}/.config/ulauncher/settings.json
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: '0664'
     - name: Copy kagi.png
       copy:
         src: files/ulauncher/kagi.png
@@ -285,6 +292,13 @@
   hosts: localhost
   tags: gnome
   tasks:
+    - name: Install ibus-pinyin
+      become: yes
+      apt:
+        pkg:
+          - ibus-pinyin
+        state: present
+
     - name: Disable desktop icons
       command: gnome-extensions disable ding@rastersoft.com 
 
@@ -349,6 +363,18 @@
       community.general.dconf:
         key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/name
         value: "'ulauncher-toggle'"
+        state: present
+
+    - name: Set shortcut for switching input source
+      community.general.dconf:
+        key: /org/gnome/desktop/wm/keybindings/switch-input-source
+        value: "['<Control>space']"
+        state: present
+
+    - name: Set shortcut for switching input source backwards
+      community.general.dconf:
+        key: /org/gnome/desktop/wm/keybindings/switch-input-source-backward
+        value: "['<Shift><Control>space']"
         state: present
 
     - name: Enable thumbnail preview for all files in Nautlius
