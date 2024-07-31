@@ -225,6 +225,12 @@
   hosts: localhost
   tags: ulauncher
   tasks:
+    - name: Install prerequisites
+      become: yes
+      apt:
+        pkg:
+          - python3-fuzzywuzzy
+        state: present
     - name: Copy kagi.png
       copy:
         src: files/ulauncher/kagi.png
@@ -365,7 +371,3 @@
 
     - name: Enable Frippery Move Clock extension
       command: gnome-extensions enable Move_Clock@rmy.pobox.com
-
-# chinese inputf
-# telegram
-# wechat
