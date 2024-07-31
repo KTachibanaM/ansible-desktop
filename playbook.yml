@@ -239,6 +239,16 @@
         owner: "{{ ansible_user_id }}"
         group: "{{ ansible_user_id }}"
         mode: '0664'
+    - name: Copy extensions.json
+      copy:
+        src: files/ulauncher/extensions.json
+        dest: /home/{{ ansible_user_id }}/.config/ulauncher/extensions.json
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: '0664'
+    - name: Print message
+      debug:
+        msg: "Please restart ulauncher and manually configure extensions"
 
 - name: Install Android Studio
   hosts: localhost
@@ -356,7 +366,6 @@
     - name: Enable Frippery Move Clock extension
       command: gnome-extensions enable Move_Clock@rmy.pobox.com
 
-# ulauncher vscode
 # chinese inputf
 # telegram
 # wechat
