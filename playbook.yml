@@ -344,13 +344,19 @@
     - name: Set keyboard shortcut for terminal
       community.general.dconf:
         key: /org/gnome/settings-daemon/plugins/media-keys/terminal
-        value: "['<Super>t']"
+        value: "['<Alt>t']"
+        state: present
+
+    - name: Clear keyboard shortcut for window menu
+      community.general.dconf:
+        key: /org/gnome/desktop/wm/keybindings/activate-window-menu
+        value: "[]"
         state: present
 
     - name: Set keyboard shortcut for ulauncher-toggle
       community.general.dconf:
         key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/binding
-        value: "'<Super>space'"
+        value: "'<Alt>space'"
         state: present
 
     - name: Set command for ulauncher-toggle
@@ -365,16 +371,16 @@
         value: "'ulauncher-toggle'"
         state: present
 
-    - name: Set shortcut for switching input source
+    - name: Set keyboard shortcut for switching input source
       community.general.dconf:
         key: /org/gnome/desktop/wm/keybindings/switch-input-source
-        value: "['<Control>space']"
+        value: "['<Super>space']"
         state: present
 
-    - name: Set shortcut for switching input source backwards
+    - name: Set keyboard shortcut for switching input source backwards
       community.general.dconf:
         key: /org/gnome/desktop/wm/keybindings/switch-input-source-backward
-        value: "['<Shift><Control>space']"
+        value: "['<Shift><Super>space']"
         state: present
 
     - name: Enable thumbnail preview for all files in Nautlius
