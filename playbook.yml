@@ -299,6 +299,15 @@
           - ibus-pinyin
         state: present
 
+    - name: Copy over gdm3 custom config
+      become: yes
+      template:
+        src: files/gdm3-custom.conf.j2
+        dest: /etc/gdm3/custom.conf
+        owner: root
+        group: root
+        mode: '0644'
+
     - name: Disable desktop icons
       command: gnome-extensions disable ding@rastersoft.com 
 
