@@ -308,6 +308,12 @@
         group: root
         mode: '0644'
 
+    - name: Set GTK theme
+      community.general.dconf:
+        key: /org/gnome/desktop/interface/gtk-theme
+        value: "'Yaru-sage-dark'"
+        state: present
+
     - name: Disable desktop icons
       command: gnome-extensions disable ding@rastersoft.com 
 
