@@ -358,6 +358,7 @@
     - name: Disable dock
       command: gnome-extensions disable ubuntu-dock@ubuntu.com
 
+    # time stuff
     - name: Show seconds in clock
       community.general.dconf:
         key: /org/gnome/desktop/interface/clock-show-seconds
@@ -382,6 +383,7 @@
         value: "true"
         state: present
 
+    # terminal
     - name: Change default terminal to Alacritty
       community.general.dconf:
         key: /org/gnome/desktop/applications/terminal/exec
@@ -397,19 +399,14 @@
     - name: Set keyboard shortcut for terminal
       community.general.dconf:
         key: /org/gnome/settings-daemon/plugins/media-keys/terminal
-        value: "['<Alt>t']"
+        value: "['<Super>q']"
         state: present
 
-    - name: Clear keyboard shortcut for window menu
-      community.general.dconf:
-        key: /org/gnome/desktop/wm/keybindings/activate-window-menu
-        value: "[]"
-        state: present
-
+    # runner
     - name: Set keyboard shortcut for ulauncher-toggle
       community.general.dconf:
         key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/binding
-        value: "'<Alt>space'"
+        value: "'<Super>r'"
         state: present
 
     - name: Set command for ulauncher-toggle
@@ -424,6 +421,21 @@
         value: "'ulauncher-toggle'"
         state: present
 
+    # home (file explorer)
+    - name: Set keyboard shortcut for home
+      community.general.dconf:
+        key: /org/gnome/settings-daemon/plugins/media-keys/home
+        value: "['<Super>e']"
+        state: present
+
+    # firefox
+    - name: Set keyboard shortcut for firefox
+      community.general.dconf:
+        key: /org/gnome/settings-daemon/plugins/media-keys/www
+        value: "['<Super>w']"
+        state: present
+
+    # input source
     - name: Set keyboard shortcut for switching input source
       community.general.dconf:
         key: /org/gnome/desktop/wm/keybindings/switch-input-source
