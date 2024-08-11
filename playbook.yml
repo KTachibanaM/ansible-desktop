@@ -118,6 +118,35 @@
       become: yes
       command: fc-cache -f -v
 
+- name: Install pyenv
+  hosts: localhost
+  tags: pyenv
+  tasks:
+    - name: Install Python build dependencies
+      become: yes
+      apt:
+        pkg:
+          - build-essential
+          - libssl-dev
+          - zlib1g-dev
+          - libbz2-dev
+          - libreadline-dev
+          - libsqlite3-dev
+          - curl
+          - git
+          - libncursesw5-dev
+          - xz-utils
+          - tk-dev
+          - libxml2-dev
+          - libxmlsec1-dev
+          - libffi-dev
+          - liblzma-dev
+        state: present
+    - name: Install pyenv
+      git:
+        repo: https://github.com/pyenv/pyenv.git
+        dest: /home/{{ ansible_user_id }}/.pyenv
+
 - name: Configure zsh
   hosts: localhost
   tags: zsh
