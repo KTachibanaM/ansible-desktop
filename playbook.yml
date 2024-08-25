@@ -288,48 +288,6 @@
         group: "{{ ansible_user_id }}"
         mode: '0664'
 
-- name: Configure ulauncher
-  hosts: localhost
-  tags: ulauncher
-  tasks:
-    - name: Install prerequisites
-      become: yes
-      apt:
-        pkg:
-          - python3-fuzzywuzzy
-        state: present
-    - name: Copy settings.json
-      copy:
-        src: files/ulauncher/settings.json
-        dest: /home/{{ ansible_user_id }}/.config/ulauncher/settings.json
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_id }}"
-        mode: '0664'
-    - name: Copy kagi.png
-      copy:
-        src: files/ulauncher/kagi.png
-        dest: /home/{{ ansible_user_id }}/.config/ulauncher/kagi.png
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_id }}"
-        mode: '0664'
-    - name: Copy shortcuts.json
-      copy:
-        src: files/ulauncher/shortcuts.json
-        dest: /home/{{ ansible_user_id }}/.config/ulauncher/shortcuts.json
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_id }}"
-        mode: '0664'
-    - name: Copy extensions.json
-      copy:
-        src: files/ulauncher/extensions.json
-        dest: /home/{{ ansible_user_id }}/.config/ulauncher/extensions.json
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_id }}"
-        mode: '0664'
-    - name: Print message
-      debug:
-        msg: "Please restart ulauncher and manually configure extensions"
-
 - name: Install Android Studio
   hosts: localhost
   tags: android-studio
@@ -429,25 +387,6 @@
       community.general.dconf:
         key: /org/gnome/settings-daemon/plugins/media-keys/terminal
         value: "['<Super>q']"
-        state: present
-
-    # runner
-    - name: Set keyboard shortcut for ulauncher-toggle
-      community.general.dconf:
-        key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/binding
-        value: "'<Super>r'"
-        state: present
-
-    - name: Set command for ulauncher-toggle
-      community.general.dconf:
-        key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/command
-        value: "'ulauncher-toggle'"
-        state: present
-
-    - name: Set name for ulauncher-toggle
-      community.general.dconf:
-        key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/name
-        value: "'ulauncher-toggle'"
         state: present
 
     # home (file explorer)
