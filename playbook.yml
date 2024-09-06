@@ -333,6 +333,17 @@
         group: root
         mode: '0644'
 
+    - name: Ensure ~/.config/environment.d exists
+      file:
+        path: /home/{{ ansible_user_id }}/.config/environment.d
+        state: directory
+
+    - name: Force wayland for Electron apps
+      copy:
+        src: 30-electron-ozone-wayland.conf
+        dest: /home/{{ ansible_user_id }}/.config/environment.d
+        mode: '0755'
+
     - name: Set GTK theme
       community.general.dconf:
         key: /org/gnome/desktop/interface/gtk-theme
@@ -422,17 +433,30 @@
         value: "'always'"
         state: present
 
+    - name: Enable Gnome user extension globally
+      community.general.dconf:
+        key: /org/gnome/shell/disable-user-extensions
+        value: "false"
+        state: present
+
     - name: Download Frippery Move Clock extension
       get_url:
         url: https://extensions.gnome.org/extension-data/Move_Clockrmy.pobox.com.v31.shell-extension.zip
         dest: /tmp/Move_Clock.zip
-    
+
     - name: Install Frippery Move Clock extension
       command: gnome-extensions install --force /tmp/Move_Clock.zip
-    
-    - name: Print message
-      debug:
-        msg: "Please log out and log in for changes to take effect"
 
     - name: Enable Frippery Move Clock extension
       command: gnome-extensions enable Move_Clock@rmy.pobox.com
+
+    - name: Download Input Method Panel extension
+      get_url:
+        url: https://extensions.gnome.org/extension-data/kimpanelkde.org.v82.shell-extension.zip
+        dest: /tmp/Input_Method_Panel.zip
+    
+    - name: Install Input Method Panel extension
+      command: gnome-extensions install --force /tmp/Input_Method_Panel.zip
+
+    - name: Enable Input Method Panel extension
+      command: gnome-extensions enable kimpanel@kde.org
