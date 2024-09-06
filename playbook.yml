@@ -333,17 +333,6 @@
         group: root
         mode: '0644'
 
-    - name: Ensure ~/.config/environment.d exists
-      file:
-        path: /home/{{ ansible_user_id }}/.config/environment.d
-        state: directory
-
-    - name: Force wayland for Electron apps
-      copy:
-        src: 30-electron-ozone-wayland.conf
-        dest: /home/{{ ansible_user_id }}/.config/environment.d
-        mode: '0755'
-
     - name: Set GTK theme
       community.general.dconf:
         key: /org/gnome/desktop/interface/gtk-theme
