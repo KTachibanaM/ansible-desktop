@@ -288,22 +288,6 @@
         group: "{{ ansible_user_id }}"
         mode: '0664'
 
-- name: Configure VSCode
-  hosts: localhost
-  tags: vscode
-  tasks:
-    - name: Copy desktop file with Wayland enabled
-      become: true
-      copy:
-        src: files/code.desktop
-        dest: /usr/share/applications/
-        owner: root
-        group: root
-        mode: '0775'
-    - name: Refresh desktop entries
-      become: true
-      command: update-desktop-database
-
 - name: Install Android Studio
   hosts: localhost
   tags: android-studio
