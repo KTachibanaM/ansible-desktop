@@ -1,0 +1,133 @@
+ name: Install ibus-pinyin
+  become: yes
+  apt:
+    pkg:
+      - ibus-pinyin
+    state: present
+
+- name: Copy over gdm3 custom config
+  become: yes
+  template:
+    src: files/gdm3-custom.conf.j2
+    dest: /etc/gdm3/custom.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Set GTK theme
+  community.general.dconf:
+    key: /org/gnome/desktop/interface/gtk-theme
+    value: "'Yaru-sage-dark'"
+    state: present
+
+- name: Disable desktop icons
+  command: gnome-extensions disable ding@rastersoft.com 
+
+- name: Disable dock
+  command: gnome-extensions disable ubuntu-dock@ubuntu.com
+
+# time stuff
+- name: Show seconds in clock
+  community.general.dconf:
+    key: /org/gnome/desktop/interface/clock-show-seconds
+    value: "true"
+    state: present
+
+- name: Change time display format to 24h
+  community.general.dconf:
+    key: /org/gnome/desktop/interface/clock-format
+    value: "'24h'"
+    state: present
+
+- name: Show date in clock
+  community.general.dconf:
+    key: /org/gnome/desktop/interface/clock-show-date
+    value: "true"
+    state: present
+
+- name: Show weekday in clock
+  community.general.dconf:
+    key: /org/gnome/desktop/interface/clock-show-weekday
+    value: "true"
+    state: present
+
+# terminal
+- name: Change default terminal to Alacritty
+  community.general.dconf:
+    key: /org/gnome/desktop/applications/terminal/exec
+    value: "'alacritty'"
+    state: present
+
+- name: Remove default terminal arg
+  community.general.dconf:
+    key: /org/gnome/desktop/applications/terminal/exec-arg
+    value: "''"
+    state: present
+
+- name: Set keyboard shortcut for terminal
+  community.general.dconf:
+    key: /org/gnome/settings-daemon/plugins/media-keys/terminal
+    value: "['<Super>q']"
+    state: present
+
+# home (file explorer)
+- name: Set keyboard shortcut for home
+  community.general.dconf:
+    key: /org/gnome/settings-daemon/plugins/media-keys/home
+    value: "['<Super>e']"
+    state: present
+
+# firefox
+- name: Set keyboard shortcut for firefox
+  community.general.dconf:
+    key: /org/gnome/settings-daemon/plugins/media-keys/www
+    value: "['<Super>w']"
+    state: present
+
+# input source
+- name: Set keyboard shortcut for switching input source
+  community.general.dconf:
+    key: /org/gnome/desktop/wm/keybindings/switch-input-source
+    value: "['<Super>space']"
+    state: present
+
+- name: Set keyboard shortcut for switching input source backwards
+  community.general.dconf:
+    key: /org/gnome/desktop/wm/keybindings/switch-input-source-backward
+    value: "['<Shift><Super>space']"
+    state: present
+
+- name: Enable thumbnail preview for all files in Nautlius
+  community.general.dconf:
+    key: /org/gnome/nautilus/preferences/show-image-thumbnails
+    value: "'always'"
+    state: present
+
+# Gnome extensions
+- name: Enable Gnome user extension globally
+  community.general.dconf:
+    key: /org/gnome/shell/disable-user-extensions
+    value: "false"
+    state: present
+
+- name: Download Frippery Move Clock extension
+  get_url:
+    url: https://extensions.gnome.org/extension-data/Move_Clockrmy.pobox.com.v31.shell-extension.zip
+    dest: /tmp/Move_Clock.zip
+
+- name: Install Frippery Move Clock extension
+  command: gnome-extensions install --force /tmp/Move_Clock.zip
+
+- name: Enable Frippery Move Clock extension
+  command: gnome-extensions enable Move_Clock@rmy.pobox.com
+
+- name: Download Input Method Panel extension
+  get_url:
+    url: https://extensions.gnome.org/extension-data/kimpanelkde.org.v82.shell-extension.zip
+    dest: /tmp/Input_Method_Panel.zip
+
+- name: Install Input Method Panel extension
+  command: gnome-extensions install --force /tmp/Input_Method_Panel.zip
+
+- name: Enable Input Method Panel extension
+  command: gnome-extensions enable kimpanel@kde.org

@@ -1,0 +1,68 @@
+- name: Install prerequisites
+  become: yes
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+
+- name: Add Docker GPG key
+  become: yes
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker repository
+  become: yes
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+
+- name: Install Docker
+  become: yes
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+
+- name: Add user to docker group
+  become: yes
+  user:
+    name: "{{ ansible_user_id }}"
+    groups: docker
+    append: yes
+
+- name: Download lazydocker
+  get_url:
+    url: https://github.com/jesseduffield/lazydocker/releases/download/v0.23.3/lazydocker_0.23.3_Linux_x86_64.tar.gz
+    dest: /tmp/lazydocker.tar.gz
+
+- name: Create unpack dir for lazydocker
+  file:
+    path: /tmp/lazydocker
+    state: directory
+
+- name: Unpack lazydocker
+  unarchive:
+    src: /tmp/lazydocker.tar.gz
+    dest: /tmp/lazydocker
+    remote_src: yes
+
+- name: Install lazydocker
+  copy:
+    src: /tmp/lazydocker/lazydocker
+    dest: /home/{{ ansible_user_id }}/.local/bin/lazydocker
+    mode: '0755'
+
+- name: Print message
+  debug:
+    msg: "Please reboot to apply docker group changes"

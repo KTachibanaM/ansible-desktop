@@ -1,0 +1,22 @@
+- name: Install prerequisites
+  become: yes
+  apt:
+    pkg:
+      - unzip
+    state: present
+
+- name: Download JetBrains Mono font
+  get_url:
+    url: https://download.jetbrains.com/fonts/JetBrainsMono-2.242.zip
+    dest: /tmp/JetBrainsMono.zip
+
+- name: Unzip JetBrains Mono font
+  become: yes
+  unarchive:
+    src: /tmp/JetBrainsMono.zip
+    dest: /usr/share/fonts
+    remote_src: yes
+
+- name: Update font cache
+  become: yes
+  command: fc-cache -f -v
