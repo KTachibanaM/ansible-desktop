@@ -1,4 +1,4 @@
-- name: Remove snap version
+- name: Remove Firefox snap version
   become: yes
   community.general.snap:
     name: firefox
@@ -31,3 +31,24 @@
     pkg:
       - firefox
     state: present
+
+- name: Copy custom gdm3 config
+  become: yes
+  template:
+    src: files/gdm3-custom.conf.j2
+    dest: /etc/gdm3/custom.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Set Ubuntu theme
+  community.general.dconf:
+    key: /org/gnome/desktop/interface/gtk-theme
+    value: "'Yaru-sage-dark'"
+    state: present
+
+- name: Disable desktop icons
+  command: gnome-extensions disable ding@rastersoft.com 
+
+- name: Disable dock
+  command: gnome-extensions disable ubuntu-dock@ubuntu.com

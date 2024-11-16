@@ -1,8 +1,8 @@
 - hosts: localhost
   tasks:
-    - name: Install Firefox (deb over snap)
+    - name: Run Ubuntu specific tasks
       tags: firefox
-      include_tasks: tasks/firefox.yml
+      include_tasks: tasks/ubuntu.yml
 
     - name: Install git, GCM and git-profile-manager
       tags: git
@@ -32,4 +32,4 @@
       tags: gnome
       include_tasks: tasks/gnome.yml
 
-# todo: rust, python (uv), nodejs, flyctl
+# todo: rust, python (uv), nodejs, flyctl, vscode, gray, syncthing, 1password, telegram, fix-screen-res + system76 (scaling for asahi), tailscale
