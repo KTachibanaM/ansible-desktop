@@ -1,3 +1,5 @@
-Requires `sudo apt install python3-psutil`
+# ansible-desktop
 
-ansible-playbook playbook.yml --tags <tags> --ask-become-pass
+Prerequisites `sudo apt install python3-psutil`
+
+`ansible-playbook <playbook file>.yml <--ask-become-pass>`

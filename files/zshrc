@@ -13,7 +13,8 @@ export PATH=$HOME/.local/bin:$PATH
 source <(git-profile-manager completion zsh)
 
 export FLYCTL_INSTALL="$HOME/.fly"
-export PATH="$FLYCTL_INSTALL/bin:$PATH"
+export PATH=$FLYCTL_INSTALL/bin:$PATH
+export PATH=/usr/local/go/bin:$PATH
 
 download-yt-audio() {
     if [ -z "$1" ]; then
@@ -22,3 +23,6 @@ download-yt-audio() {
     fi
     yt-dlp -f bestaudio -x --audio-format mp3 --audio-quality 0 "$1"
 }
+
+alias vs="vscli open"
+alias vsr="vscli recent"

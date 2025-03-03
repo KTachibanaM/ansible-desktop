@@ -1,0 +1,51 @@
+- hosts: localhost
+  tasks:
+  - name: Install prerequisites
+    become: yes
+    apt:
+      pkg:
+        - git
+      state: present
+
+  - name: Download GCM
+    get_url:
+      url: https://github.com/git-ecosystem/git-credential-manager/releases/download/v2.5.1/gcm-linux_amd64.2.5.1.deb
+      dest: /tmp/gcm.deb
+
+  - name: Install GCM
+    become: yes
+    apt:
+      deb: /tmp/gcm.deb
+      state: present
+
+  - name: Configure GCM
+    command: git-credential-manager configure
+
+  - name: Configure GCM for Secret Service
+    command: git config --global credential.credentialStore secretservice
+
+  - name: Download git-profile-manager
+    get_url:
+      url: https://github.com/dm3ch/git-profile-manager/releases/download/v2.0.3/git-profile-manager_2.0.3_Linux_x86_64.tar.gz
+      dest: /tmp/git-profile-manager.tar.gz
+
+  - name: Create unpack dir for git-profile-manager
+    file:
+      path: /tmp/git-profile-manager
+      state: directory
+
+  - name: Unpack git-profile-manager
+    unarchive:
+      src: /tmp/git-profile-manager.tar.gz
+      dest: /tmp/git-profile-manager
+      remote_src: yes
+
+  - name: Install git-profile-manager
+    copy:
+      src: /tmp/git-profile-manager/git-profile-manager
+      dest: /home/{{ ansible_user_id }}/.local/bin/git-profile-manager
+      mode: '0755'
+
+  - name: Print message
+    debug:
+      msg: "Please run 'git-profile-manager add' to add new git profiles"

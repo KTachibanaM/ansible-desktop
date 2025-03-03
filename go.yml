@@ -1,0 +1,12 @@
+- hosts: localhost
+  tasks:
+  - name: Download Golang tarball
+    get_url:
+      url: https://go.dev/dl/go1.23.5.linux-amd64.tar.gz
+      dest: /tmp/go1.23.5.linux-amd64.tar.gz
+
+  - name: Extract Golang tarball
+    unarchive:
+      src: /tmp/go1.23.5.linux-amd64.tar.gz
+      dest: /usr/local
+      remote_src: yes

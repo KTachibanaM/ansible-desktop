@@ -1,0 +1,56 @@
+- hosts: localhost
+  tasks:
+  - name: Remove Firefox snap version
+    become: yes
+    community.general.snap:
+      name: firefox
+      state: absent
+
+  - name: Add Firefox GPG key
+    become: yes
+    apt_key:
+      url: https://packages.mozilla.org/apt/repo-signing-key.gpg
+      state: present
+
+  - name: Add Firefox repository
+    become: yes
+    apt_repository:
+      repo: "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main"
+      state: present
+
+  - name: Pin firefox package debian over snap
+    become: yes
+    copy:
+      src: files/firefox-pin
+      dest: /etc/apt/preferences.d/mozilla
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: Install Firefox
+    become: yes
+    apt:
+      pkg:
+        - firefox
+      state: present
+
+  - name: Copy custom gdm3 config
+    become: yes
+    template:
+      src: files/gdm3-custom.conf.j2
+      dest: /etc/gdm3/custom.conf
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: Set Ubuntu theme
+    community.general.dconf:
+      key: /org/gnome/desktop/interface/gtk-theme
+      value: "'Yaru-sage-dark'"
+      state: present
+
+  - name: Disable desktop icons
+    command: gnome-extensions disable ding@rastersoft.com 
+
+  - name: Disable dock
+    command: gnome-extensions disable ubuntu-dock@ubuntu.com
