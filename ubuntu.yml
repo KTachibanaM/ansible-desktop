@@ -1,5 +1,16 @@
 - hosts: localhost
   tasks:
+  - name: Install apt prerequisites
+    become: yes
+    apt:
+      pkg:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg
+        - lsb-release
+      state: present
+
   - name: Add Docker GPG key
     become: yes
     apt_key:
@@ -12,25 +23,48 @@
       repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
       state: present
 
+  - name: Add Syncthing PGP keys:
+    become: yes
+    apt_key:
+      url: https://syncthing.net/release-key.gpg
+      state: present
+
+  - name: Add Syncthing repository
+    become: yes
+    apt_repository:
+      repo: "deb [signed-by=/etc/apt/keyrings/syncthing-archive-keyring.gpg] https://apt.syncthing.net/ syncthing stable"
+      state: present
+
+  - name: Add Tailscale GPG key
+    become: yes
+    apt_key:
+      url: https://pkgs.tailscale.com/stable/ubuntu/{{ ansible_distribution_release }}.noarmor.gpg
+      state: present
+
+  - name: Add Tailscale repository
+    become: yes
+    apt_repository:
+      repo: "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/ubuntu {{ ansible_distribution_release }} main"
+      state: present
+
   - name: Install applications
     become: yes
     apt:
       pkg:
         - alacritty
-        - apt-transport-https
-        - ca-certificates
         - containerd.io
-        - curl
         - docker-buildx-plugin
         - docker-ce
         - docker-ce-cli
         - docker-compose-plugin
         - git
-        - gnupg
         - ibus-pinyin
-        - lsb-release
+        - lutris
         - p7zip-full
         - p7zip-rar
+        - steam
+        - syncthing
+        - tailscale
         - unrar
         - unzip
         - zsh
@@ -45,6 +79,28 @@
     become: yes
     apt:
       deb: /tmp/gcm.deb
+      state: present
+
+  - name: Download VSCode
+    get_url:
+      url: https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
+      dest: /tmp/vscode.deb
+
+  - name: Install VSCode
+    become: yes
+    apt:
+      deb: /tmp/vscode.deb
+      state: present
+
+  - name: Download 1Password
+    get_url:
+      url: https://downloads.1password.com/linux/debian/amd64/stable/1password-latest.deb
+      dest: /tmp/1password.deb
+
+  - name: Install 1Password
+    become: yes
+    apt:
+      deb: /tmp/1password.deb
       state: present
 
   - name: Remove Firefox snap version
@@ -80,24 +136,3 @@
       pkg:
         - firefox
       state: present
-
-  - name: Copy custom gdm3 config
-    become: yes
-    template:
-      src: files/gdm3-custom.conf.j2
-      dest: /etc/gdm3/custom.conf
-      owner: root
-      group: root
-      mode: '0644'
-
-  - name: Set Ubuntu theme
-    community.general.dconf:
-      key: /org/gnome/desktop/interface/gtk-theme
-      value: "'Yaru-sage-dark'"
-      state: present
-
-  - name: Disable desktop icons
-    command: gnome-extensions disable ding@rastersoft.com 
-
-  - name: Disable dock
-    command: gnome-extensions disable ubuntu-dock@ubuntu.com

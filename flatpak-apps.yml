@@ -6,14 +6,15 @@
       state: present
     with_items:
       - ca.desrt.dconf-editor
-      - com.github.PintaProject.Pinta
       - com.github.libresprite.LibreSprite
+      - com.github.PintaProject.Pinta
       - com.spotify.Client
       - com.todoist.Todoist
       - io.gitlab.news_flash.NewsFlash
       - md.obsidian.Obsidian
       - net.davidotek.pupgui2
       - org.chromium.Chromium
+      - org.gnome.Extensions
       - org.telegram.desktop
     
   - name: Install WeChat from remote .flatpak file

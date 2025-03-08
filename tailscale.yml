@@ -1,0 +1,6 @@
+- hosts: localhost
+  tasks:
+  - name: Run tailscale up
+    command: tailscale up
+    args:
+      creates: /var/lib/tailscale/tailscaled.sock
