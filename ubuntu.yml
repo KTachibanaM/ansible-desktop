@@ -47,6 +47,12 @@
       repo: "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/ubuntu {{ ansible_distribution_release }} main"
       state: present
 
+  - name: Add system76 PPA
+    become: yes
+    apt_repository:
+      repo: "ppa:system76-dev/stable"
+      state: present
+
   - name: Install applications
     become: yes
     apt:
@@ -57,6 +63,8 @@
         - docker-ce
         - docker-ce-cli
         - docker-compose-plugin
+        - fcitx5
+        - fcitx5-chinese-addons
         - git
         - ibus-pinyin
         - lutris
@@ -64,6 +72,7 @@
         - p7zip-rar
         - steam
         - syncthing
+        - system76-driver
         - tailscale
         - unrar
         - unzip

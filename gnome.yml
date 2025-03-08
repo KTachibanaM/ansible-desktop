@@ -105,3 +105,33 @@
 
   - name: Enable Input Method Panel extension
     command: gnome-extensions enable kimpanel@kde.org
+
+  - name: Download Tiling Shell extension
+    get_url:
+      url: https://extensions.gnome.org/extension-data/tilingshellferrarodomenico.com.v49.shell-extension.zip
+      dest: /tmp/Tiling_Shell.zip
+  
+  - name: Install Tiling Shell extension
+    command: gnome-extensions install --force /tmp/Tiling_Shell.zip
+  
+  - name: Enable Tiling Shell extension
+    command: gnome-extensions enable tilingshell@ferrarodomenico.com
+
+  - name: Configure Tiling Shell extension (inner-gaps)
+    community.general.dconf:
+      key: /org/gnome/shell/extensions/tilingshell/inner-gaps
+      value: "0"
+      state: present
+
+  - name: Configure Tiling Shell extension (outer-gaps)
+    community.general.dconf:
+      key: /org/gnome/shell/extensions/tilingshell/outer-gaps
+      value: "0"
+      state: present
+
+  - name: Configure Tiling Shell extension (layouts-json)
+    community.general.dconf:
+      key: /org/gnome/shell/extensions/tilingshell/maximize
+      value: >
+        [{"id":"16946684","tiles":[{"x":0.5,"y":0,"width":0.25,"height":1,"groups":[3,1]},{"x":0,"y":0,"width":0.25,"height":1,"groups":[2]},{"x":0.25,"y":0,"width":0.25,"height":1,"groups":[1,2]},{"x":0.75,"y":0,"width":0.25,"height":1,"groups":[3]}]},{"id":"403133813","tiles":[{"x":0,"y":0,"width":0.25,"height":1,"groups":[1]},{"x":0.25,"y":0,"width":0.5,"height":1,"groups":[2,1]},{"x":0.75,"y":0,"width":0.24999999999998956,"height":1,"groups":[2]}]}]
+      state: present
