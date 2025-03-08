@@ -1,14 +1,5 @@
 - hosts: localhost
   tasks:
-  - name: Install prerequisites
-    become: yes
-    apt:
-      pkg:
-        - zsh
-        - curl
-        - git
-      state: present
-
   - name: Change default shell to zsh
     become: yes
     user:

@@ -1,23 +1,5 @@
 - hosts: localhost
   tasks:
-  - name: Install prerequisites
-    become: yes
-    apt:
-      pkg:
-        - git
-      state: present
-
-  - name: Download GCM
-    get_url:
-      url: https://github.com/git-ecosystem/git-credential-manager/releases/download/v2.5.1/gcm-linux_amd64.2.5.1.deb
-      dest: /tmp/gcm.deb
-
-  - name: Install GCM
-    become: yes
-    apt:
-      deb: /tmp/gcm.deb
-      state: present
-
   - name: Configure GCM
     command: git-credential-manager configure
 

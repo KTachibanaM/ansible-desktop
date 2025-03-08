@@ -1,0 +1,12 @@
+- hosts: localhost
+  tasks:
+  - name: Add user to docker group
+    become: yes
+    user:
+      name: "{{ ansible_user_id }}"
+      groups: docker
+      append: yes
+
+  - name: Print message
+    debug:
+      msg: "Please reboot to apply docker group changes"

@@ -1,12 +1,5 @@
 - hosts: localhost
   tasks:
-  - name: Install ibus-pinyin
-    become: yes
-    apt:
-      pkg:
-        - ibus-pinyin
-      state: present
-
   # time stuff
   - name: Show seconds in clock
     community.general.dconf:

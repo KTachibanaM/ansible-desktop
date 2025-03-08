@@ -1,11 +1,5 @@
 - hosts: localhost
   tasks:
-  - name: Install prerequisites
-    become: yes
-    apt:
-      pkg:
-        - alacritty
-      state: present
   - name: Copy alacritty.toml
     copy:
       src: files/alacritty.toml

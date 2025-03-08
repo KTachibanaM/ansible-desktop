@@ -1,12 +1,5 @@
 - hosts: localhost
   tasks:
-  - name: Install prerequisites
-    become: yes
-    apt:
-      pkg:
-        - unzip
-      state: present
-
   - name: Download JetBrains Mono font
     get_url:
       url: https://download.jetbrains.com/fonts/JetBrainsMono-2.242.zip
