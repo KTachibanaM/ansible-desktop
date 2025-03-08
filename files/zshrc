@@ -23,6 +23,3 @@ download-yt-audio() {
     fi
     yt-dlp -f bestaudio -x --audio-format mp3 --audio-quality 0 "$1"
 }
-
-alias vs="vscli open"
-alias vsr="vscli recent"

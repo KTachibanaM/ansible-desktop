@@ -1,0 +1,24 @@
+- hosts: localhost
+  tasks:
+  - name: Install flatpak apps
+    flatpak:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - ca.desrt.dconf-editor
+      - com.github.PintaProject.Pinta
+      - com.github.libresprite.LibreSprite
+      - com.spotify.Client
+      - com.todoist.Todoist
+      - io.gitlab.news_flash.NewsFlash
+      - md.obsidian.Obsidian
+      - net.davidotek.pupgui2
+      - org.chromium.Chromium
+      - org.telegram.desktop
+    
+  - name: Install WeChat from remote .flatpak file
+    command: flatpak install -y --noninteractive {{ flatpak_file_url }}
+    vars:
+      flatpak_file_url: https://github.com/web1n/wechat-universal-flatpak/releases/download/4.0.1.7-2412160734/com.tencent.WeChat-x86_64.flatpak
+    args:
+      creates: /var/lib/flatpak/app/com.tencent.WeChat
