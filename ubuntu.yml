@@ -112,6 +112,17 @@
       deb: /tmp/1password.deb
       state: present
 
+  - name: Download LocalSend
+    get_url:
+      url: https://github.com/localsend/localsend/releases/download/v1.17.0/LocalSend-1.17.0-linux-x86-64.deb
+      dest: /tmp/localsend.deb
+
+  - name: Install LocalSend
+    become: yes
+    apt:
+      deb: /tmp/localsend.deb
+      state: present
+
   - name: Remove Firefox snap version
     become: yes
     community.general.snap:
